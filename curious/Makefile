@@ -11,14 +11,13 @@ CHEM_DATA_CSV='${CURDIR}/data/chem_data.csv'
 
 CREATE_MASTER_PLAN_TABLE=$(SCRIPTS)/create_table_master_plan.sql
 
-all: import normalize
-	psql -U postgres -d $(DB) -f $(BUILD)
+all: import_master_plan normalize_master_plan
 
-normalize:
+normalize_master_plan:
 	@echo "normalizing db"
-	psql -U postgres -d $(DB) -f $(BUILD)
-
-import:
+	psql -U postgres -d $(DB) -f $(SCRIPTS)/normalize_master_plan.sql
+# "@" does not echo the command being executed
+import_master_plan:
 	@echo "importing master_plan"
 	@cat $(CREATE_MASTER_PLAN_TABLE) >> $(BUILD)
 	@echo "COPY import.master_plan FROM $(CSV) WITH DELIMITER ',' HEADER CSV;" >> $(BUILD)
