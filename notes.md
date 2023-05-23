@@ -300,3 +300,16 @@ Now put it all together.
 - scripts/normalize.sql creates the lookups, creates the event table, and jam data from master_plan via lookups
 - need to fill out the scripts
 
+## Flyby
+
+Cassini had 23 (or perhaps 22) flybys to Enceladus. Find the precise times of the closest approach for each flyby. Doesn't NASA already know this?
+
+search from `events` table where `title ILIKE '%flyby&' OR title ILIKE '&fly by&'` and include targets so we can filter for enceladus
+
+Spot check the data vs ground truth, i.e. `import.master_plan`; first enceladus flyby should be in feb 17, 2005
+
+Apparently that first flyby was called "obtain wideband examples of lightning whistlers", and target was "Saturn", not "Enceladus"???
+
+### Sargeable vs non-sargeable
+
+### full-text indexing and materialized views
