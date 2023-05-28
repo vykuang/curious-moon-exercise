@@ -312,4 +312,62 @@ Apparently that first flyby was called "obtain wideband examples of lightning wh
 
 ### Sargeable vs non-sargeable
 
-### full-text indexing and materialized views
+SARG is short for **search argument**. Sargable means that the database is able to perform an *index seek* to match the search predicate. If we're searching by an integer the engine could sort by that integer column, and automatically *seek* to that row without scanning every row.
+
+Non-sargable means that the database is not able to use index seek, i.e. it must perform some SQL function, e.g. `WHERE UPPER(name) LIKE 'CASSINI'`. The storage engine must return all rows to SQL engine for intermediate evaluation before searching. This becomes a sequential scan; all rows must be evaluated.
+
+### Materialized views
+
+Not an actual table; just stored snippets of SQL. Create with:
+
+```sql
+drop view if exists enceladus_events;
+create view enceladus_events as
+select
+    events.time_stamp,
+    events.time_stamp::date as date,
+    event_types.description as event
+from events
+inner join event_types
+on event_types.id = events.event_type_id
+where target_id=28
+order by time_stamp;
+```
+
+Creating a view does not execute it, unlike creating a table; the view SQL only executes when it is queried against.
+
+### full-text indexing
+
+Prioritize useful terms and deprioritize *noise*. Critical when searching through our `title` or `description` columns in a large database.
+
+In postgres, `to_tsvector(events.description)` is a function that indexes the string column. To make use of this indexed string column, use this in a where clause: `where search @@ to_tsquery('thermal')`. That will show all matches; other operators besides `@@` will do different things
+
+### First flyby
+
+Via historical context (i.e. domain knowledge), we know that feb 17 2005 was definitely first flyby. Time to identify it in our facts table, i.e. `events`
+
+Look in events, and put back the text description by joining the dimension tables for manual inspection. This way we find out how the scientists actually labelled their flyby:
+
+```sql
+select
+    targets.description as target,
+    events.time_stamp,
+    event_types.description as event
+from events
+inner join event_types on event_types.id = events.event_type_id
+inner join targets on targets.id = events.target_id
+where events.time_stamp::date = '2005-02-17'
+order by events.time_stamp;
+```
+
+This looks for all events on that date, with original target and event type descriptions as string.
+
+One line reads: `Enceladus closest approach observation` with `Enceladus` as target, so let's put that restriction: `targets.description ILIKE 'enceladus'`. However instead of doing a slow string query, we can find what the target ID integer is via `select * from targets where description = 'Enceladus'` (28 for me; 40 in the book) and perform an index search. Cuts time in half from 94 to 55 ms; non-sargeable vs sargeable.
+
+The flyby unexpectedly revealed some signs of an atmosphere. Second flyby threw all their instruments at it. The most active team on the 2005-03-09 flyby was CIRS (composite infared scanner), followed by UVIS (ultraviolet imaging spectrograph subsystem), to take UV images, then VIMS for infrared. This avalanche of readings confirmed that Enceladus indeed posessed an atmosphere
+
+## psql commands
+
+- \c DB_NAME - connect to that db
+- \H - output in html
+- \o FILE_NAME - redirects from STDOUT (terminal) to specified filename; usually used with \H

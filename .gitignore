@@ -3,3 +3,4 @@
 /postgres-data/*
 /postgres-data/
 /curious/data/*
+*.html
