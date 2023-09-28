@@ -4,3 +4,4 @@
 /postgres-data/
 /curious/data/*
 *.html
+.ipynb_checkpoints/
