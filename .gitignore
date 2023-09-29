@@ -5,3 +5,4 @@
 /curious/data/*
 *.html
 .ipynb_checkpoints/
+nohup.out
