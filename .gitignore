@@ -1,5 +1,8 @@
 /build.sql
 /data/*
 /postgres-data/*
-
+/postgres-data/
 /curious/data/*
+*.html
+.ipynb_checkpoints/
+nohup.out

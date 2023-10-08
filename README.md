@@ -1,7 +1,5 @@
 # My notes about: A Curious Moon by Rob Conery
 
-This repository contains the implementation I did while reading the book. All SQL queries as well as a description **how to setup everything on Windows 10 using Docker** are also part of this repository.
-
 A Curious Moon by Rob Conery.
 
 ![cover](./images/cover.png)
@@ -16,7 +14,7 @@ A Curious Moon by Rob Conery.
 1. build the Docker images `docker compose build`
     - or `docker-compose build db` to build the database image alone 
 2. `docker-compose up -d` to download the Docker images and start the containers
-3. download the RAW cassini data from [Redfour](http://archive.redfour.io/cassini/cassini_data.zip)
+3. download the RAW cassini data from [Redfour](https://archive.redfour.io/)
 4. store the files under `./curious/data`
 5. `docker exec -it curious_db bash` to open a _Bash_ on the _Postgres_ container
 6. `cd /home/curious` to browse the mounted directory with the make file and raw CSV data
@@ -27,7 +25,7 @@ A Curious Moon by Rob Conery.
 
 ## Get the Cassini RAW data
 
-Download the raw data from [http://archive.redfour.io/cassini/cassini_data.zip](http://archive.redfour.io/cassini/cassini_data.zip). To begin with I am only interested in the `master_plan.csv` file. The other files `cda.csv`, `inms.csv`, `jpl_flybys.csv`, and `chem_data.csv` will also be necessary later.
+Download the raw data from [https://archive.redfour.io/](https://archive.redfour.io/). To begin with I am only interested in the `master_plan.csv` file. The other files `cda.csv`, `inms.csv`, `jpl_flybys.csv`, and `chem_data.csv` will also be necessary later.
 
 ## Use PGAdmin to connect to the database
 
@@ -48,10 +46,6 @@ Open a *Bash* on the *Docker* container.
 E.g. `create database enceladus;` to create a database if it is not there yet (e.g. if it was dropped before)
 
 Type `\q` to exit Postgres shell (PSQL).
-
-## Images
-
-I really liked Dee's drawings to make things clearer - that's why I drew them myself.
 
 ### Cosmic dust analyzer (CDA)
 

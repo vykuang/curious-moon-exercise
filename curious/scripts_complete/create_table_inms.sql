@@ -77,6 +77,3 @@ CREATE TABLE import.inms (
     c1counts text,
     c2counts text
 );
-COPY import.inms
-FROM '/home/curious/data/INMS/inms.csv'
-WITH DELIMITER ',' HEADER CSV;

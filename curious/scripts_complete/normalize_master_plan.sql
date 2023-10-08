@@ -1,5 +1,3 @@
--- impose idempotency with drop table if exists
--- "cascade" forces table drop even if there is dependency
 -- TEAMS
 drop table if exists teams cascade;
 select distinct(team) as description into teams
@@ -31,7 +29,6 @@ from import.master_plan;
 alter table requests
 add id serial primary key;
 -- EVENTS
--- this only defines the colum types
 drop table if exists events cascade;
 create table events(
     id serial primary key,
@@ -44,24 +41,22 @@ create table events(
     request_id int references requests(id),
     spass_type_id int references spass_types(id)
 );
--- populate the table
--- replace texts with the new int IDs from dimension table
 insert into events(
-    time_stamp,
-    title,
-    description,
-    event_type_id,
-    target_id,
-    team_id,
-    request_id,
-    spass_type_id
-)
+        time_stamp,
+        title,
+        description,
+        event_type_id,
+        target_id,
+        team_id,
+        request_id,
+        spass_type_id
+    )
 select import.master_plan.start_time_utc::timestamp,
     import.master_plan.title,
     import.master_plan.description,
     event_types.id as event_type_id,
     targets.id as target_id,
-    teams.id as teams_id,
+    teams.id as team_id,
     requests.id as request_id,
     spass_types.id as spass_type_id
 from import.master_plan
@@ -70,4 +65,3 @@ from import.master_plan
     left join teams on teams.description = import.master_plan.team
     left join requests on requests.description = import.master_plan.request_name
     left join spass_types on spass_types.description = import.master_plan.spass_type;
-    
